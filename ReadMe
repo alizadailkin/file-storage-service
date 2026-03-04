@@ -1,0 +1,184 @@
+# 🗄️ File Storage Service
+
+Docker Compose ilə tam avtomatik File Storage API sistemi.
+
+## 🚀 Tez Başlanğıc
+
+### 1. Repository Clone
+```bash
+git clone <repository-url>
+cd file-storage-service
+```
+
+### 2. Docker Compose ilə İşə Salın
+```bash
+docker-compose up -d
+```
+
+### 3. Sistem Hazırdır! ✅
+
+**Backend API:** http://localhost:8080
+**MinIO Console:** http://localhost:9001 (minioadmin / minioadmin123)
+
+---
+
+## 🔑 API Key İdarəetməsi
+
+### 1. Yeni API Key Yaradın
+
+**İlk API Key yaratmaq üçün authentication lazım deyil:**
+```bash
+curl -X POST http://localhost:8080/api/keys/generate \
+  -H "Content-Type: application/json" \
+  -d '{"name": "My First Key"}'
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "name": "My First Key",
+  "apiKey": "YOUR_API_KEY_HERE",
+  "maskedKey": "ABCD****WXYZ",
+  "createdAt": "2026-03-03T...",
+  "isActive": true
+}
+```
+
+⚠️ **Əhəmiyyətli:** `apiKey` yalnız bir dəfə göstərilir! Yadda saxlayın!
+
+---
+
+## 📡 API Endpoints
+
+### 🔐 Bütün endpoint-lər üçün `X-API-Key` header lazımdır
+
+### Fayl Yükləmə
+```bash
+curl -X POST http://localhost:8080/api/files/upload \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -F "file=@/path/to/file.pdf"
+```
+
+### Fayl Endirmə
+```bash
+curl -X GET http://localhost:8080/api/files/{fileId} \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -O
+```
+
+### Fayl Metadata
+```bash
+curl -X GET http://localhost:8080/api/files/metadata/{fileId} \
+  -H "X-API-Key: YOUR_API_KEY"
+```
+
+### Bütün Faylları Göstər
+```bash
+curl -X GET http://localhost:8080/api/files/list \
+  -H "X-API-Key: YOUR_API_KEY"
+```
+
+### Fayl Sil
+```bash
+curl -X DELETE http://localhost:8080/api/files/{fileId} \
+  -H "X-API-Key: YOUR_API_KEY"
+```
+
+### API Key-ləri Göstər
+```bash
+curl -X GET http://localhost:8080/api/keys/list \
+  -H "X-API-Key: YOUR_API_KEY"
+```
+
+### API Key Sil
+```bash
+curl -X DELETE http://localhost:8080/api/keys/{id} \
+  -H "X-API-Key: YOUR_API_KEY"
+```
+
+---
+
+## 🏗️ Arxitektura
+```
+┌─────────────┐      ┌──────────────┐      ┌──────────┐
+│   Client    │─────▶│  Spring Boot │─────▶│  MinIO   │
+└─────────────┘      │   (API)      │      │ Storage  │
+                     └──────────────┘      └──────────┘
+                            │
+                            ▼
+                     ┌──────────────┐
+                     │  PostgreSQL  │
+                     │  (Metadata)  │
+                     └──────────────┘
+```
+
+---
+
+## 🗄️ Database Schema
+
+### api_keys
+- id, key_hash, name, created_at, last_used_at, is_active
+
+### file_metadata
+- id, file_id, original_name, stored_name, file_size
+- content_type, bucket_name, object_name
+- uploaded_by_key_id, uploaded_at, download_count
+
+---
+
+## 🛠️ Tech Stack
+
+- **Java 17**
+- **Spring Boot 3.2**
+- **PostgreSQL** (metadata)
+- **MinIO** (object storage)
+- **Docker & Docker Compose**
+- **BCrypt** (API key hashing)
+
+---
+
+## 🔒 Təhlükəsizlik
+
+✅ API Key authentication
+✅ BCrypt hashing
+✅ One-time key display
+✅ Rate limiting (future)
+✅ Audit logging
+
+---
+
+## 📊 MinIO Console
+
+MinIO UI-a daxil olun:
+- URL: http://localhost:9001
+- Username: `minioadmin`
+- Password: `minioadmin123`
+
+---
+
+## 🧪 Test
+
+### Postman Collection
+Import edin və test edin!
+
+---
+
+## 📝 Qeydlər
+
+- Maksimum fayl ölçüsü: 100MB
+- API Key-lər BCrypt ilə hash olunur
+- Fayllar MinIO-da saxlanılır
+- Metadata PostgreSQL-də saxlanılır
+
+---
+
+## 🤝 Contributing
+
+Pull request-lər xoş gəlmisiniz!
+
+---
+
+## 📄 License
+
+MIT License
