@@ -28,21 +28,21 @@ public class ApiKeyService {
             throw new RuntimeException("API Key with this name already exists");
         }
 
-        // Generate random API key
+
         String rawApiKey = generateRandomKey();
         String hashedKey = passwordEncoder.encode(rawApiKey);
 
-        // Save to database
+
         ApiKey apiKey = new ApiKey(hashedKey, request.getName());
         apiKey = apiKeyRepository.save(apiKey);
 
         log.info("Generated new API key: {}", request.getName());
 
-        // Return with the raw key (only shown once!)
+
         return new ApiKeyResponse(
                 apiKey.getId(),
                 apiKey.getName(),
-                rawApiKey,  // Raw key only shown here
+                rawApiKey,
                 maskKey(rawApiKey),
                 apiKey.getCreatedAt(),
                 apiKey.getLastUsedAt(),

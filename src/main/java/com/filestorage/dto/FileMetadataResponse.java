@@ -18,5 +18,5 @@ public class FileMetadataResponse {
     private LocalDateTime uploadedAt;
     private Long downloadCount;
     private LocalDateTime lastAccessedAt;
-    private String uploadedBy;  // API key name
+    private String uploadedBy;
 }

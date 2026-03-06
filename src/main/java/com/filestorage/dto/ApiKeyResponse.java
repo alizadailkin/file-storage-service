@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 public class ApiKeyResponse {
     private Long id;
     private String name;
-    private String apiKey;  // Only shown once during creation
-    private String maskedKey;  // Masked version for listing
+    private String apiKey;
+    private String maskedKey;
     private LocalDateTime createdAt;
     private LocalDateTime lastUsedAt;
     private Boolean isActive;

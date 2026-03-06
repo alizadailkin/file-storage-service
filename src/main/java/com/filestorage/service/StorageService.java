@@ -39,7 +39,7 @@ public class StorageService {
             String storedName = fileId + "_" + originalName;
             String objectName = "files/" + storedName;
 
-            // Upload to MinIO
+
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(bucketName)
@@ -49,7 +49,7 @@ public class StorageService {
                             .build()
             );
 
-            // Save metadata to database
+
             FileMetadata metadata = new FileMetadata();
             metadata.setFileId(fileId);
             metadata.setOriginalName(originalName);
@@ -143,7 +143,7 @@ public class StorageService {
             FileMetadata metadata = fileMetadataRepository.findByFileId(fileId)
                     .orElseThrow(() -> new FileNotFoundException("File not found: " + fileId));
 
-            // Delete from MinIO
+
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
                             .bucket(metadata.getBucketName())
@@ -151,7 +151,7 @@ public class StorageService {
                             .build()
             );
 
-            // Delete metadata from database
+
             fileMetadataRepository.delete(metadata);
 
             log.info("File deleted: {}", fileId);

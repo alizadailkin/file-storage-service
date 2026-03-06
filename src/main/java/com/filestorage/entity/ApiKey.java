@@ -20,10 +20,10 @@ public class ApiKey {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 64)
-    private String keyHash;  // BCrypt hash of the API key
+    private String keyHash;
 
     @Column(nullable = false, length = 100)
-    private String name;  // Friendly name for the key
+    private String name;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

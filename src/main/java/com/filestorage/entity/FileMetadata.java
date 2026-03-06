@@ -20,29 +20,29 @@ public class FileMetadata {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String fileId;  // UUID for the file
+    private String fileId;
 
     @Column(nullable = false, length = 500)
-    private String originalName;  // Original filename
+    private String originalName;
 
     @Column(nullable = false, length = 500)
-    private String storedName;  // Name in MinIO
+    private String storedName;
 
     @Column(nullable = false)
-    private Long fileSize;  // Size in bytes
+    private Long fileSize;
 
     @Column(nullable = false, length = 100)
-    private String contentType;  // MIME type
+    private String contentType;
 
     @Column(nullable = false, length = 100)
-    private String bucketName;  // MinIO bucket
+    private String bucketName;
 
     @Column(nullable = false, length = 500)
-    private String objectName;  // MinIO object path
+    private String objectName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uploaded_by_key_id")
-    private ApiKey uploadedByKey;  // Which API key uploaded this
+    private ApiKey uploadedByKey;
 
     @CreationTimestamp
     @Column(name = "uploaded_at", nullable = false, updatable = false)

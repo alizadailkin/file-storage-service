@@ -3,6 +3,7 @@ package com.filestorage.controller;
 import com.filestorage.dto.FileMetadataResponse;
 import com.filestorage.dto.FileUploadResponse;
 import com.filestorage.entity.ApiKey;
+import com.filestorage.entity.FileMetadata;
 import com.filestorage.service.StorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,69 +26,73 @@ public class FileController {
 
     private final StorageService storageService;
 
-    /**
-     * Upload file
-     * Requires valid API Key in X-API-Key header
-     */
+
     @PostMapping("/upload")
     public ResponseEntity<FileUploadResponse> uploadFile(
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request) {
 
+        log.info("=== UPLOAD START ===");
+        log.info("File name: {}", file.getOriginalFilename());
+        log.info("File size: {}", file.getSize());
+        log.info("Content type: {}", file.getContentType());
+
         if (file.isEmpty()) {
+            log.error("File is empty!");
             return ResponseEntity.badRequest().build();
         }
 
-        // Get API key from request attribute (set by ApiKeyAuthFilter)
         ApiKey apiKey = (ApiKey) request.getAttribute("apiKey");
+        log.info("Uploading with API key: {}", apiKey.getName());
 
         FileUploadResponse response = storageService.uploadFile(file, apiKey);
+
+        log.info("=== UPLOAD SUCCESS === File ID: {}", response.getFileId());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * Download file
-     * Requires valid API Key in X-API-Key header
-     */
+
     @GetMapping("/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) {
-        FileMetadataResponse metadata = storageService.getFileMetadata(fileId);
+        log.info("=== DOWNLOAD START === File ID: {}", fileId);
+
         Resource resource = storageService.downloadFile(fileId);
+        FileMetadataResponse metadata = storageService.getFileMetadata(fileId);
 
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(metadata.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + metadata.getOriginalName() + "\"")
+                .contentType(MediaType.parseMediaType(metadata.getContentType()))
                 .body(resource);
     }
 
-    /**
-     * Get file metadata
-     * Requires valid API Key in X-API-Key header
-     */
+
     @GetMapping("/metadata/{fileId}")
     public ResponseEntity<FileMetadataResponse> getFileMetadata(@PathVariable String fileId) {
+        log.info("=== METADATA REQUEST === File ID: {}", fileId);
+
         FileMetadataResponse metadata = storageService.getFileMetadata(fileId);
         return ResponseEntity.ok(metadata);
     }
 
-    /**
-     * List all files
-     * Requires valid API Key in X-API-Key header
-     */
+
     @GetMapping("/list")
     public ResponseEntity<List<FileMetadataResponse>> listFiles() {
+        log.info("=== LIST FILES ===");
+
         List<FileMetadataResponse> files = storageService.listAllFiles();
         return ResponseEntity.ok(files);
     }
 
-    /**
-     * Delete file
-     * Requires valid API Key in X-API-Key header
-     */
+
     @DeleteMapping("/{fileId}")
     public ResponseEntity<Void> deleteFile(@PathVariable String fileId) {
+        log.info("=== DELETE START === File ID: {}", fileId);
+
         storageService.deleteFile(fileId);
+
+        log.info("=== DELETE SUCCESS === File ID: {}", fileId);
         return ResponseEntity.noContent().build();
     }
 }

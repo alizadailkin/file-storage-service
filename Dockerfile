@@ -1,4 +1,4 @@
-# Build aşaması: Java 21
+
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY src src
 RUN chmod +x ./mvnw
 RUN ./mvnw clean package -DskipTests
 
-# Runtime aşaması: yine Java 21 kullanıyoruz
+
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar

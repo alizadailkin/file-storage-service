@@ -18,30 +18,21 @@ public class ApiKeyController {
 
     private final ApiKeyService apiKeyService;
 
-    /**
-     * Generate new API Key
-     * PUBLIC - No authentication required
-     */
+
     @PostMapping("/generate")
     public ResponseEntity<ApiKeyResponse> generateApiKey(@Valid @RequestBody ApiKeyRequest request) {
         ApiKeyResponse response = apiKeyService.generateApiKey(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * List all API Keys (masked)
-     * Requires valid API Key in X-API-Key header
-     */
+
     @GetMapping("/list")
     public ResponseEntity<List<ApiKeyResponse>> listApiKeys() {
         List<ApiKeyResponse> keys = apiKeyService.getAllApiKeys();
         return ResponseEntity.ok(keys);
     }
 
-    /**
-     * Delete API Key
-     * Requires valid API Key in X-API-Key header
-     */
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteApiKey(@PathVariable Long id) {
         apiKeyService.deleteApiKey(id);
